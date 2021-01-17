@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChatBot"
+        xmlns:properties="clr-namespace:ChatBot.Properties"
         mc:Ignorable="d"
         Title="ChatBot" MinHeight="300" MinWidth="200" Height="600" Width="400" Icon="Images\robot.ico">
     <Window.CommandBindings>
@@ -40,6 +41,11 @@
             <Setter Property="Margin"
                     Value="2" />
         </Style>
+        <Style TargetType="ItemsControl"
+               x:Key="mensajesBackground">
+            <Setter Property="Background"
+                    Value="{Binding Source={x:Static properties:Settings.Default},Path=FondoColor}" />
+        </Style>
         <!--POSICION CONVERSACION-->
         <Style TargetType="Border"
                x:Key="posicionBorder">
@@ -59,14 +65,14 @@
                     <Setter Property="HorizontalAlignment"
                             Value="Left" />
                     <Setter Property="Background"
-                            Value="LightGreen" />
+                            Value="{Binding Source={x:Static properties:Settings.Default},Path=UsuarioColor}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=Emisor}"
                              Value="Robot">
                     <Setter Property="HorizontalAlignment"
                             Value="Right" />
                     <Setter Property="Background"
-                            Value="LightBlue" />
+                            Value="{Binding Source={x:Static properties:Settings.Default},Path=RobotColor}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -78,11 +84,26 @@
             <Setter Property="Margin"
                     Value="5" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding Path=Emisor}"
-                             Value="Usuario">
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=Emisor}"
+                                   Value="Usuario" />
+                        <Condition Binding="{Binding Source={x:Static properties:Settings.Default},Path=SexoUsuario}"
+                                   Value="Mujer" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Source"
+                            Value="Images/mujer.png" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=Emisor}"
+                                   Value="Usuario" />
+                        <Condition Binding="{Binding Source={x:Static properties:Settings.Default},Path=SexoUsuario}"
+                                   Value="Hombre" />
+                    </MultiDataTrigger.Conditions>
                     <Setter Property="Source"
                             Value="Images/hombre.png" />
-                </DataTrigger>
+                </MultiDataTrigger>
                 <DataTrigger Binding="{Binding Path=Emisor}"
                              Value="Robot">
                     <Setter Property="Source"
@@ -225,8 +246,8 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <ItemsControl x:Name="mensajesItemsControl"
-                      Background="LightGoldenrodYellow"
-                      ItemsSource="{Binding}">
+                          Style="{StaticResource mensajesBackground}"
+                          ItemsSource="{Binding}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Style="{StaticResource posicionBorder}">

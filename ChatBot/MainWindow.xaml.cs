@@ -1,8 +1,13 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
+using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ChatBot
 {
@@ -13,8 +18,10 @@ namespace ChatBot
     {
         ObservableCollection<Mensaje> listaMensajes;
         Mensaje mensaje;
-        private const string mensajeRobot = "Lo siento, estoy un poco cansado de hablar";
+        private QnAMakerRuntimeClient cliente;
+        private const string usuarioHumano = "Usuario";
         private const string usuarioRobot = "Robot";
+        private const string falloRobot = "Lo siento, algo ha salido mal";
         public MainWindow()
         {
             InitializeComponent();
@@ -37,15 +44,15 @@ namespace ChatBot
 
         private void guardarCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            string conversacion = "";
+            StringBuilder conversacion = new StringBuilder();
             foreach (Mensaje m in listaMensajes)
             {
-                conversacion += m.ToString();
+                conversacion.Append(m.ToString());
             }
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "TXT files (*.txt;)|*.txt";
             if (saveFileDialog.ShowDialog() == true)
-                File.WriteAllText(saveFileDialog.FileName, conversacion);
+                File.WriteAllText(saveFileDialog.FileName, conversacion.ToString());
         }
 
         private void guardarCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -68,18 +75,39 @@ namespace ChatBot
 
         private void configCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            Configuracion configuracion = new Configuracion();
+            configuracion.Owner = this;
 
+            configuracion.ColorUsuario = Properties.Settings.Default.UsuarioColor;
+            configuracion.ColorFondo = Properties.Settings.Default.FondoColor;
+            configuracion.ColorRobot = Properties.Settings.Default.RobotColor;
+            configuracion.SexoUsuario = Properties.Settings.Default.SexoUsuario;
+
+            if (configuracion.ShowDialog() == true)
+            {
+                Properties.Settings.Default.UsuarioColor = configuracion.ColorUsuario.ToString();
+                Properties.Settings.Default.FondoColor = configuracion.ColorFondo.ToString();
+                Properties.Settings.Default.RobotColor = configuracion.ColorRobot.ToString();
+                Properties.Settings.Default.SexoUsuario = configuracion.SexoUsuario;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void configCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-
+            e.CanExecute = true;
         }
 
-        private void checkCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        private async void checkCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            
-             MessageBox.Show("Conexión correcta con el servidor del Bot","Comprobar conexión",MessageBoxButton.OK,MessageBoxImage.Information);
+            if(await RespuestaRobotAsync("Hola") != falloRobot)
+            {
+                MessageBox.Show("Conexión correcta con el servidor del Bot", "Comprobar conexión", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Conexión fallida con el servidor del Bot", "Comprobar conexión", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void checkCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -87,14 +115,16 @@ namespace ChatBot
             e.CanExecute = true;
         }
 
-        private void sendCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        private async void sendCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mensaje = new Mensaje(textoUsuarioTextBox.Text, "Usuario");
-            listaMensajes.Add(mensaje);
-            mensaje = new Mensaje(mensajeRobot, usuarioRobot);
-            listaMensajes.Add(mensaje);
+            string pregunta = textoUsuarioTextBox.Text;
+            mensaje = new Mensaje(textoUsuarioTextBox.Text, usuarioHumano);
             textoUsuarioTextBox.Text = "";
+            listaMensajes.Add(mensaje);
+            mensaje = new Mensaje("Procesando...", usuarioRobot);
+            listaMensajes.Add(mensaje);
             textoScrollViewer.ScrollToEnd();
+            listaMensajes[listaMensajes.Count - 1].Texto = await RespuestaRobotAsync(pregunta);
         }
 
         private void sendCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -103,6 +133,26 @@ namespace ChatBot
                 e.CanExecute = true;
             else
                 e.CanExecute = false;
+        }
+
+        public async System.Threading.Tasks.Task<string> RespuestaRobotAsync(string pregunta)
+        {
+            string respuesta;
+            try
+            {
+                string EndPoint = "https://alejandrochatbot.azurewebsites.net";
+                string EndPointKey = "edf23ac8-a06b-45be-b66b-ea40b104bd52";
+                string KnowledgeBaseId = "8fadfbdd-ce9d-456d-b371-ca8575b398d8";
+                cliente = new QnAMakerRuntimeClient(new EndpointKeyServiceClientCredentials(EndPointKey)) { RuntimeEndpoint = EndPoint };
+
+                QnASearchResultList response = await cliente.Runtime.GenerateAnswerAsync(KnowledgeBaseId, new QueryDTO { Question = pregunta });
+                respuesta = response.Answers[0].Answer;
+            }
+            catch (Exception)
+            {
+                respuesta = falloRobot;
+            }
+            return respuesta;
         }
     }
 }
