@@ -31,7 +31,9 @@
                   Grid.Column="1"
                   Grid.ColumnSpan="2"
                   Margin="15"
-                  x:Name="colorFondoComboBox">
+                  x:Name="colorFondoComboBox"
+                  SelectedValue="{Binding Path=ColorFondo}"
+                  SelectedValuePath="Name">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -53,7 +55,8 @@
                   Grid.ColumnSpan="2"
                   Margin="15"
                   x:Name="colorUsuarioComboBox"
-                  SelectedItem="{Binding Path=ColorUsuario}">
+                  SelectedValue="{Binding Path=ColorUsuario}"
+                  SelectedValuePath="Name">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -75,7 +78,8 @@
                   Grid.ColumnSpan="2"
                   Margin="15"
                   x:Name="colorRobotComboBox"
-                  SelectedItem="{Binding Path=ColorRobot}">
+                  SelectedValue="{Binding Path=ColorRobot}"
+                  SelectedValuePath="Name">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">

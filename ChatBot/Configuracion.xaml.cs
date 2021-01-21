@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 
@@ -30,10 +29,6 @@ namespace ChatBot
 
         private void AceptarButton_Click(object sender, RoutedEventArgs e)
         {
-            ColorFondo = colorFondoComboBox.SelectedItem.ToString();
-            ColorUsuario = colorUsuarioComboBox.SelectedItem.ToString();
-            ColorRobot = colorRobotComboBox.SelectedItem.ToString();
-            SexoUsuario = sexoUsuarioComboBox.SelectedItem.ToString();
             DialogResult = true;
         }
     }
