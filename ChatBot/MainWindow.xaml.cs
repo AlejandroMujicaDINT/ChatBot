@@ -139,9 +139,9 @@ namespace ChatBot
             string respuesta;
             try
             {
-                string EndPoint = "https://alejandrochatbot.azurewebsites.net";
-                string EndPointKey = "edf23ac8-a06b-45be-b66b-ea40b104bd52";
-                string KnowledgeBaseId = "8fadfbdd-ce9d-456d-b371-ca8575b398d8";
+                string EndPoint = Properties.Settings.Default.EndPoint;
+                string EndPointKey = Properties.Settings.Default.EndPointKey;
+                string KnowledgeBaseId = Properties.Settings.Default.KnowledgeBaseId;
                 cliente = new QnAMakerRuntimeClient(new EndpointKeyServiceClientCredentials(EndPointKey)) { RuntimeEndpoint = EndPoint };
 
                 QnASearchResultList response = await cliente.Runtime.GenerateAnswerAsync(KnowledgeBaseId, new QueryDTO { Question = pregunta });

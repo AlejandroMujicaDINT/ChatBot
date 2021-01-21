@@ -14,5 +14,14 @@
     <Setting Name="SexoUsuario" Type="System.String" Scope="User">
       <Value Profile="(Default)">Hombre</Value>
     </Setting>
+    <Setting Name="EndPoint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://alejandrochatbot.azurewebsites.net</Value>
+    </Setting>
+    <Setting Name="EndPointKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">edf23ac8-a06b-45be-b66b-ea40b104bd52</Value>
+    </Setting>
+    <Setting Name="KnowledgeBaseId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">8fadfbdd-ce9d-456d-b371-ca8575b398d8</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

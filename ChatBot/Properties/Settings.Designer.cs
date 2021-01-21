@@ -70,5 +70,32 @@ namespace ChatBot.Properties {
                 this["SexoUsuario"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://alejandrochatbot.azurewebsites.net")]
+        public string EndPoint {
+            get {
+                return ((string)(this["EndPoint"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("edf23ac8-a06b-45be-b66b-ea40b104bd52")]
+        public string EndPointKey {
+            get {
+                return ((string)(this["EndPointKey"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8fadfbdd-ce9d-456d-b371-ca8575b398d8")]
+        public string KnowledgeBaseId {
+            get {
+                return ((string)(this["KnowledgeBaseId"]));
+            }
+        }
     }
 }
